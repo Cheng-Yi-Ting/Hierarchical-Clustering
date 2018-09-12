@@ -9,6 +9,7 @@ from collections import OrderedDict
 
 from sklearn import feature_extraction
 from sklearn.feature_extraction.text import TfidfTransformer
+from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.cluster import AgglomerativeClustering
 import pandas as pd
@@ -80,13 +81,19 @@ if __name__ == '__main__':
     # CountVectorizer类会将文本中的词语转换为词频矩阵，例如矩阵中包含一个元素a[i][j]，它表示j词在i类文本下的词频。
     # 它通过fit_transform函数计算各个词语出现的次数，通过get_feature_names()可获取词袋中所有文本的关键字，通过toarray()可看到词频矩阵的结果。
     # TfidfTransformer用于统计vectorizer中每个词语的TF-IDF值。
-    vectorizer = CountVectorizer()
-    transformer = TfidfTransformer()  # 该类会统计每个词语的tf-idf权值
+
+    # vectorizer = CountVectorizer()
+    # transformer = TfidfTransformer()
+    # tfidf = transformer.fit_transform(vectorizer.fit_transform(corpus))
+    # 等价于：
+    # transformer = TfidfVectorizer()
+    # tfidf2 = transformer.fit_transform(corpus)
+
+    transformer = TfidfVectorizer()  # 该类会统计每个词语的tf-idf权值
     # 第一个fit_transform是计算tf-idf，第二个fit_transform是将文本转为词频矩阵
-    tfidf = transformer.fit_transform(vectorizer.fit_transform(corpus))
+    tfidf = transformer.fit_transform(corpus)
     # print(vectorizer.fit_transform(corpus))
     # print(tfidf)
-    word = vectorizer.get_feature_names()  # 获取词袋模型中的所有词语
     # print(word)
     weight = tfidf.toarray()  # 将tf-idf矩阵抽取出来，元素a[i][j]表示j词在i类文本中的tf-idf权重
     # print(weight)
@@ -103,7 +110,7 @@ if __name__ == '__main__':
 
     for i in range(len(tf_idf.docs)):
         tf_idf.docs[i]['label'] = cluster.labels_[i]
-        print(i, tf_idf.docs[i])
+        # print(i, tf_idf.docs[i])
     # # 排序，相同群集合在一起
     lines = sorted(tf_idf.docs, key=lambda k: k['label'])
 
